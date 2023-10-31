@@ -1,0 +1,346 @@
+package bstTipoExamen;
+
+
+
+
+class Equipo {
+
+String nombre;
+
+String id;
+
+
+
+public Equipo(String nombre, String id) {
+
+this.nombre = nombre;
+
+this.id = id;
+
+}
+
+}
+
+
+
+class NodoBST {
+
+Equipo equipo;
+
+NodoBST izquierdo;
+
+NodoBST derecho;
+
+
+
+public NodoBST(Equipo equipo) {
+
+this.equipo = equipo;
+
+this.izquierdo = null;
+
+this.derecho = null;
+
+}
+
+}
+
+
+
+class ArbolBST {
+
+NodoBST raiz;
+
+
+
+public ArbolBST() {
+
+raiz = null;
+
+}
+
+
+
+public void insertar(Equipo equipo) {
+
+raiz = insertarRec(raiz, equipo);
+
+}
+
+
+
+private NodoBST insertarRec(NodoBST raiz, Equipo equipo) {
+
+if (raiz == null) {
+
+return new NodoBST(equipo);
+
+}
+
+
+
+if (equipo.id.compareTo(raiz.equipo.id) < 0) {
+
+raiz.izquierdo = insertarRec(raiz.izquierdo, equipo);
+
+} else if (equipo.id.compareTo(raiz.equipo.id) > 0) {
+
+raiz.derecho = insertarRec(raiz.derecho, equipo);
+
+}
+
+
+
+return raiz;
+
+}
+
+
+
+public void inorden() {
+
+inordenRec(raiz);
+
+}
+
+
+
+private void inordenRec(NodoBST nodo) {
+
+if (nodo != null) {
+
+inordenRec(nodo.izquierdo);
+
+System.out.println("Nombre: " + nodo.equipo.id + ", Documento: " + nodo.equipo.id);
+
+inordenRec(nodo.derecho);
+
+}
+
+}
+
+public void preorden() {
+
+preordenRec(raiz);
+
+}
+
+
+
+private void preordenRec(NodoBST nodo) {
+
+if (nodo != null) {
+
+System.out.println("Nombre: " + nodo.equipo.id + ", Documento: " + nodo.equipo.id);
+
+preordenRec(nodo.izquierdo);
+
+preordenRec(nodo.derecho);
+
+}
+
+}
+
+public void postorden() {
+
+postordenRec(raiz);
+
+}
+
+
+
+private void postordenRec(NodoBST nodo) {
+
+if (nodo != null) {
+
+postordenRec(nodo.izquierdo);
+
+postordenRec(nodo.derecho);
+
+System.out.println("Nombre: " + nodo.equipo.id + ", Documento: " + nodo.equipo.id);
+
+}
+
+}
+
+
+
+//Eliminar Nodo
+
+public void eliminarPorId(String id) {
+
+raiz = eliminarRec (raiz, id);
+
+}
+
+private NodoBST eliminarRec(NodoBST raiz, String id) {
+
+if (raiz == null) {
+
+return raiz;
+
+}
+
+
+
+if (id.compareTo(raiz.equipo.id) < 0) {
+
+raiz.izquierdo = eliminarRec(raiz.izquierdo, id);
+
+} else if (id.compareTo(raiz.equipo.id) > 0) {
+
+raiz.derecho = eliminarRec(raiz.derecho, id);
+
+} else {
+
+// Nodo encontrado, realizar la eliminación
+
+
+
+// Caso 1: El nodo no tiene hijos o un solo hijo
+
+if (raiz.izquierdo == null) {
+
+return raiz.derecho;
+
+} else if (raiz.derecho == null) {
+
+return raiz.izquierdo;
+
+}
+
+
+
+// Caso 2: El nodo tiene dos hijos, encontrar el sucesor inmediato (el valor más bajo en el subárbol derecho)
+
+raiz.equipo = encontrarMinimoValor(raiz.derecho);
+
+
+
+// Eliminar el sucesor inmediato
+
+raiz.derecho = eliminarRec(raiz.derecho, raiz.equipo.id);
+
+}
+
+
+
+return raiz;
+
+}
+
+
+
+private Equipo encontrarMinimoValor(NodoBST raiz) {
+
+Equipo minimoValor = raiz.equipo;
+
+while (raiz.izquierdo != null) {
+
+minimoValor = raiz.izquierdo.equipo;
+
+raiz = raiz.izquierdo;
+
+}
+
+
+
+return minimoValor;
+
+}
+
+//Buscar persona por documento
+
+public NodoBST buscarPorId(String id) {
+
+return buscarRec(raiz, id);
+
+}
+
+
+
+private NodoBST buscarRec(NodoBST raiz, String id) {
+
+if (raiz == null || raiz.equipo.id.equals(id)) {
+
+return raiz;
+
+}
+
+
+
+if (id.compareTo(raiz.equipo.id) < 0) {
+
+return buscarRec(raiz.izquierdo, id);
+
+}
+
+
+
+return buscarRec(raiz.derecho, id);
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class Main {
+
+public static void main(String[] args) {
+
+Equipo[] equipos = {
+
+new Equipo ("Lenovo" , "12"),
+
+new Equipo ("HP", "14"),
+
+new Equipo ("Asus", "15"),
+
+new Equipo ("Dell", "13"),
+
+// Agrega más personas aquí...
+
+};
+
+
+
+ArbolBST arbol = new ArbolBST();
+
+
+
+for (Equipo equipo : equipos) {
+
+arbol.insertar(equipo);
+
+}
+
+NodoBST nodoEncontrado = arbol.buscarPorId("15");
+
+if (nodoEncontrado != null) {
+
+System.out.println("Equipo encontrado: " + nodoEncontrado.equipo.nombre);
+
+} else {
+
+System.out.println("Equipo no encontrado.");
+
+}
+
+
+
+}
+
+
+
+}
